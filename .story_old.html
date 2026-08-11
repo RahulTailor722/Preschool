@@ -1,0 +1,157 @@
+<!-- ══════════════ 10 · OUR STORY ══════════════
+     The growth chart.
+
+     What was here before was the layout every school site uses for this
+     section: photograph on one side, three paragraphs and a stat row on
+     the other. It read as filler, because a two-column split says nothing
+     about the thing it is describing. Fourteen years of growth deserves a
+     shape that *is* growth.
+
+     So the history is drawn the way a preschool actually measures a child
+     — pencil marks climbing a doorframe. Five milestones, each one taller
+     than the last, standing on a wooden ruler. The number that grows
+     (children enrolled) sets the height, so the composition cannot lie:
+     the chart is the data.
+
+     The ruler then earns a second job. Above it is everything that grew;
+     below it are the three numbers that deliberately did not — class size,
+     adults per room, how long a teacher stays. That contrast is the actual
+     argument this section is making, and the old layout had no way to make
+     it at all. -->
+<section class="story" id="story" aria-labelledby="story-h">
+  <div class="wave wave--top" aria-hidden="true">
+    <svg viewBox="0 0 1440 80" preserveAspectRatio="none"><path d="M0,80 C120,26 240,12 360,36 C480,60 600,76 720,58 C840,40 960,6 1080,16 C1200,26 1320,58 1440,44 L1440,0 L0,0 Z" fill="var(--base-2)"/></svg>
+  </div>
+
+  <!-- pencil, because the marks had to be made with something -->
+  <div class="deco deco--swing deco--d2 deco--soft" style="top:9%;right:4%;width:26px;height:80px;" aria-hidden="true">
+    <svg viewBox="0 0 30 92">
+      <rect x="3" y="3" width="24" height="62" rx="4" fill="var(--brand-300)" stroke="var(--deep-900)" stroke-width="3"/>
+      <path d="M3 65h24l-12 24z" fill="var(--base-3)" stroke="var(--deep-900)" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M12 78l6 0-3 6z" fill="var(--deep-900)"/>
+    </svg>
+  </div>
+  <div class="deco deco--star deco--d4" style="top:16%;left:4%;width:24px;height:24px;" aria-hidden="true">
+    <svg viewBox="0 0 24 24"><path fill="var(--brand-500)" d="M12 0l3 9 9 3-9 3-3 9-3-9-9-3 9-3z"/></svg>
+  </div>
+
+  <div class="wrap">
+    <!-- Header and photographs share a row. The two snapshots are taped to
+         the same wall the marks are on, which is why they are tilted and
+         overlapping rather than framed. -->
+    <div class="story__head">
+      <div class="story__intro">
+        <p class="eyebrow" data-reveal>Our story</p>
+        <h2 id="story-h" data-reveal>Fourteen years, <span class="swash">measured</span> on the wall</h2>
+        <p class="story__lead" data-reveal>
+          Gulmohar began in 2011 in a rented two-room house off Bopal–Ambli Road —
+          nine children and one very determined teacher. We have pencilled the
+          doorframe every few years since.
+        </p>
+      </div>
+
+      <div class="story__snaps">
+        <figure class="snap snap--a" data-reveal>
+          <span class="snap__tape" aria-hidden="true"></span>
+          <img src="assets/images/story/story-music.webp" alt="Three children working side by side at a classroom table" width="1200" height="800" loading="lazy" decoding="async">
+          <figcaption>The first two rooms</figcaption>
+        </figure>
+        <figure class="snap snap--b" data-reveal>
+          <span class="snap__tape" aria-hidden="true"></span>
+          <img src="assets/images/story/story-together.webp" alt="Children sorting coloured shapes together at a table" width="1200" height="800" loading="lazy" decoding="async">
+          <figcaption>Bopal, this term</figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <!-- ---- the chart ----
+         Each mark carries its own height as `--h`, a fraction of the
+         chart's height, and its own hue. `min-height` rather than `height`
+         so a card that runs long simply pushes its own column taller
+         instead of overflowing — the staircase survives any copy edit. -->
+    <div class="chart">
+      <ol class="chart__marks" role="list">
+        <li class="mark" style="--h:.42; --tint:var(--brand-300); --rot:-1.6deg;" data-reveal>
+          <p class="mark__year">2011</p>
+          <article class="mark__card">
+            <p class="mark__num"><span data-count="9">9</span> <em>children</em></p>
+            <h3 class="mark__title">Two rented rooms</h3>
+            <p class="mark__text">One shelf of materials, one teacher, and a landlord who agreed to the noise.</p>
+          </article>
+          <span class="mark__stem" aria-hidden="true"></span>
+        </li>
+
+        <li class="mark" style="--h:.56; --tint:var(--sky-300); --rot:1.4deg;" data-reveal>
+          <p class="mark__year">2014</p>
+          <article class="mark__card">
+            <p class="mark__num"><span data-count="42">42</span> <em>children</em></p>
+            <h3 class="mark__title">A garden of our own</h3>
+            <p class="mark__text">We moved, and the children planted the gulmohar we are named after.</p>
+          </article>
+          <span class="mark__stem" aria-hidden="true"></span>
+        </li>
+
+        <li class="mark" style="--h:.70; --tint:var(--leaf-300); --rot:-1deg;" data-reveal>
+          <p class="mark__year">2017</p>
+          <article class="mark__card">
+            <p class="mark__num"><span data-count="128">128</span> <em>children</em></p>
+            <h3 class="mark__title">Three neighbourhoods</h3>
+            <p class="mark__text">Two more centres opened — on exactly the same ratios as the first.</p>
+          </article>
+          <span class="mark__stem" aria-hidden="true"></span>
+        </li>
+
+        <li class="mark" style="--h:.85; --tint:var(--grape-300); --rot:1.8deg;" data-reveal>
+          <p class="mark__year">2021</p>
+          <article class="mark__card">
+            <p class="mark__num"><span data-count="214">214</span> <em>children</em></p>
+            <h3 class="mark__title">Back through the gate</h3>
+            <p class="mark__text">After eighteen months of screens, every classroom filled again.</p>
+          </article>
+          <span class="mark__stem" aria-hidden="true"></span>
+        </li>
+
+        <li class="mark" style="--h:1; --tint:var(--accent-300); --rot:-1.2deg;" data-reveal>
+          <p class="mark__year">2025</p>
+          <article class="mark__card">
+            <p class="mark__num"><span data-count="340">340</span> <em>children</em></p>
+            <h3 class="mark__title">Six centres, same shelf</h3>
+            <p class="mark__text">Everything about us grew except the size of a class.</p>
+          </article>
+          <span class="mark__stem" aria-hidden="true"></span>
+        </li>
+      </ol>
+
+      <!-- The floor everything is standing on. Ticks are painted, not
+           marked up — a ruler is texture, and nothing here is content a
+           screen reader should have to walk through. -->
+      <div class="chart__ruler" aria-hidden="true"></div>
+    </div>
+
+    <div class="story__foot">
+      <div class="story__note">
+        <p class="story__scribble" data-reveal>
+          <svg class="story__arrow" viewBox="0 0 90 60" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
+            <path d="M4 56C10 28 32 8 74 10"/>
+            <path d="M60 4l15 6-9 13"/>
+          </svg>
+          …and below the line, three numbers that never moved.
+        </p>
+        <a class="btn btn--primary" href="#admissions" data-reveal>Read our approach
+          <span class="btn__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </a>
+      </div>
+
+      <ul class="story__constants" role="list">
+        <li data-reveal><strong>16</strong><span>children per class</span></li>
+        <li data-reveal><strong>2</strong><span>adults per room</span></li>
+        <li data-reveal><strong>6 yrs</strong><span>average teacher tenure</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="wave wave--bottom" aria-hidden="true">
+    <svg viewBox="0 0 1440 80" preserveAspectRatio="none"><path d="M0,36 C120,62 240,76 360,66 C480,56 600,24 720,20 C840,16 960,52 1080,64 C1200,76 1320,64 1440,42 L1440,80 L0,80 Z" fill="var(--base-2)"/></svg>
+  </div>
+</section>
+

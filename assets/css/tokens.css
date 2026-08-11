@@ -1,0 +1,228 @@
+/* ============================================================
+   Gulmohar Early Years — design tokens + reset
+
+   Palette: a five-hue playschool family — sunshine, bubblegum,
+   sky, leaf and grape — on warm cream, outlined and grounded in
+   deep indigo. Colour is used as *coding*, not decoration: each
+   programme, stat, pillar and step owns one hue and keeps it.
+
+   Rebrand: change the values in :root and nothing else.
+   ============================================================ */
+
+@layer reset, tokens, base, layout, components, utilities;
+
+@layer tokens {
+  :root {
+    /* ---- Brand ramp — sunshine (primary) -------------------- */
+    --brand-100: #FFF6D6;
+    --brand-200: #FFEBA8;
+    --brand-300: #FFDC63;
+    --brand-500: #FFC62E;   /* PRIMARY                          */
+    --brand-600: #F0A400;
+    --brand-700: #B87C00;
+
+    /* ---- Accent ramp — bubblegum (CTA) ---------------------- */
+    --accent-100: #FFE6EE;
+    --accent-200: #FFC8DA;
+    --accent-300: #FF9BB8;
+    --accent-500: #FF5C8A;  /* ACCENT                           */
+    --accent-600: #DE2F63;
+
+    /* ---- Deep ramp — dark panels, footer, every border ------ */
+    --deep-700: #3E2E70;
+    --deep-800: #2C1F55;
+    --deep-900: #1F1440;
+
+    /* ---- Base ramp — page surfaces -------------------------- */
+    --base:   #FFFCF5;
+    --base-2: #FFF3E2;
+    --base-3: #F4E2C6;
+
+    /* ---- Support hues — the rest of the crayon box ----------
+       Each has a light tint for fills and a solid for icons.    */
+    --sky-100:  #DFF3FD;
+    --sky-300:  #93D9F7;
+    --sky:      #3FB6EA;
+    --sky-600:  #1B8FC6;
+
+    --leaf-100: #E3F8E5;
+    --leaf-300: #9EE6A7;
+    --leaf:     #4FC663;
+    --leaf-600: #2C9F40;
+
+    --grape-100: #F1E8FE;
+    --grape-300: #CBA9F6;
+    --grape:     #A26BEC;
+    --grape-600: #7C43C7;
+
+    --text:  #2A2145;
+    --muted: #6F6690;
+    --on-dark:      #FFF7EA;
+    --on-dark-mute: #C0B2E4;
+
+    /* ---- Typography ----------------------------------------
+       Baloo 2 is rounded and chunky and carries no italic.      */
+    --font-display: "Baloo 2", "Comic Sans MS", "Trebuchet MS", sans-serif;
+    --font-body: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-script: "Caveat", "Segoe Script", cursive;
+
+    --fs-xs:   clamp(0.75rem, 0.72rem + 0.14vw, 0.82rem);
+    --fs-sm:   clamp(0.875rem, 0.84rem + 0.16vw, 0.95rem);
+    --fs-base: clamp(1rem, 0.96rem + 0.19vw, 1.09rem);
+    --fs-md:   clamp(1.125rem, 1.06rem + 0.29vw, 1.3rem);
+    --fs-lg:   clamp(1.4rem, 1.26rem + 0.62vw, 1.8rem);
+    --fs-xl:   clamp(1.8rem, 1.54rem + 1.15vw, 2.6rem);
+    --fs-2xl:  clamp(2.3rem, 1.84rem + 2.05vw, 3.85rem);
+    --fs-3xl:  clamp(2.9rem, 2rem + 4vw, 5.75rem);
+    --fs-4xl:  clamp(3.4rem, 2rem + 6.2vw, 7.75rem);
+
+    /* ---- Space -------------------------------------------- */
+    --sp-1: 0.25rem;  --sp-2: 0.5rem;   --sp-3: 0.75rem;
+    --sp-4: 1rem;     --sp-5: 1.5rem;   --sp-6: 2rem;
+    --sp-7: 3rem;
+    --sp-8: clamp(3rem, 2rem + 4vw, 5rem);
+    --sp-9: clamp(4rem, 2.5rem + 6vw, 7.5rem);
+    --sp-10: clamp(5rem, 3rem + 8vw, 10rem);
+
+    /* ---- Structure ---------------------------------------- */
+    --wrap: 1240px;
+    --wrap-narrow: 860px;
+    --gutter: clamp(1.25rem, 4vw, 3rem);
+
+    /* Rounder than is sensible, on purpose. */
+    --r-sm: 14px;  --r-md: 24px;  --r-lg: 36px;
+    --r-xl: 56px;  --r-pill: 999px;
+
+    /* Organic blob radii — used to mask photography. */
+    --blob-a: 58% 42% 46% 54% / 48% 52% 48% 52%;
+    --blob-b: 42% 58% 62% 38% / 54% 44% 56% 46%;
+    --blob-c: 50% 50% 44% 56% / 56% 46% 54% 44%;
+    --blob-leaf: 50% 12% 50% 12%;
+
+    /* ---- Outline & shadow ---------------------------------
+       Every card is outlined in ink and sits on a hard offset
+       shadow. --pop-x is the offset scale, so one change
+       retunes the whole page's chunkiness.                     */
+    --ink: var(--deep-900);
+    --outline: 3px;
+    --pop-x: 6px;
+
+    --shadow-sm: 0 2px 10px rgb(31 20 64 / 0.08);
+    --shadow-md: 0 16px 38px -12px rgb(31 20 64 / 0.22);
+    --shadow-lg: 0 32px 74px -20px rgb(31 20 64 / 0.32);
+    --shadow-polaroid: 0 18px 44px -12px rgb(31 20 64 / 0.34);
+    --shadow-pop: var(--pop-x) var(--pop-x) 0 var(--ink);
+
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+    --ease-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --dur: 0.4s;
+
+    --header-h: 78px;
+
+    /* The floating pill's own geometry. On :root rather than on .header,
+       because the hero has to pull itself up by exactly this much to sit
+       underneath the bar — see `.hero`. `.header.is-stuck` re-declares both
+       on itself to condense the bar, which is scoped to the header and so
+       cannot change what the hero already pulled up by. */
+    --bar-h: 66px;
+    --bar-pad: clamp(10px, 1.5vw, 16px);
+
+    --dots: radial-gradient(circle at 1px 1px, var(--base-3) 1.8px, transparent 0);
+    /* Confetti wash for playful section backgrounds. */
+    --confetti:
+      radial-gradient(circle at 12% 18%, var(--accent-200) 0 7px, transparent 8px),
+      radial-gradient(circle at 84% 12%, var(--sky-300) 0 6px, transparent 7px),
+      radial-gradient(circle at 68% 82%, var(--leaf-300) 0 8px, transparent 9px),
+      radial-gradient(circle at 26% 78%, var(--brand-300) 0 6px, transparent 7px),
+      radial-gradient(circle at 46% 34%, var(--grape-300) 0 5px, transparent 6px);
+  }
+}
+
+@layer reset {
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    /* Native smooth scrolling is the fallback for when Lenis is absent
+       (touch devices, blocked CDN, no JS). It MUST be switched off while
+       Lenis is running — otherwise the browser and Lenis animate the same
+       scroll position at once and the wheel stutters: a jerk, a pause,
+       then movement. Lenis puts .lenis on <html> itself. */
+    scroll-behavior: smooth;
+    scroll-padding-top: calc(var(--header-h) + 1rem);
+    /* `clip`, not `hidden`. When <body> alone carries overflow-x:hidden the
+       value propagates to the viewport and <body> itself reverts to visible,
+       so full-bleed and rotated elements still widen the document. `clip`
+       does not propagate and creates no scroll container, so the sticky
+       header keeps working. */
+    overflow-x: clip;
+    /* Locking the page (open drawer, open lightbox) sets overflow:hidden,
+       which takes the scrollbar away and lets the layout widen by its width
+       — a sideways jolt in the middle of the drawer's slide. Reserving the
+       gutter permanently means locking changes nothing. */
+    scrollbar-gutter: stable;
+  }
+
+  html.lenis, html.lenis body { scroll-behavior: auto !important; }
+  html.lenis body { height: auto; }
+  .lenis.lenis-stopped { overflow: hidden; }
+
+  body, h1, h2, h3, h4, p, figure, blockquote, dl, dd, ul, ol {
+    margin: 0; padding: 0;
+  }
+
+  ul[role="list"], ol[role="list"] { list-style: none; }
+
+  img, picture, svg, video { display: block; max-width: 100%; }
+  img { height: auto; }
+
+  input, button, textarea, select { font: inherit; color: inherit; }
+  button { background: none; border: 0; cursor: pointer; }
+  a { color: inherit; }
+
+  :target { scroll-margin-top: calc(var(--header-h) + 2rem); }
+
+  :focus-visible {
+    outline: 3px solid var(--accent-500);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer base {
+  body {
+    font-family: var(--font-body);
+    font-size: var(--fs-base);
+    line-height: 1.68;
+    color: var(--text);
+    background: var(--base);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: clip;
+  }
+
+  /* Baloo 2 has a tall x-height and deep descenders, so it needs a
+     roomier line-height and no negative tracking to stay legible. */
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    line-height: 1.14;
+    letter-spacing: -0.005em;
+    text-wrap: balance;
+  }
+
+  p { text-wrap: pretty; }
+  strong { font-weight: 700; }
+
+  ::selection { background: var(--accent-500); color: #fff; }
+}

@@ -1,0 +1,236 @@
+/* ============================================================
+   Gulmohar Early Years — motion
+   Everything here is additive. If GSAP/Lenis fail to load, the
+   fallback rules below keep all content fully visible.
+   ============================================================ */
+
+@layer utilities {
+
+  /* ---------- keyframes ---------- */
+  /* Two-copy marquee: shifts by exactly one copy, so the seam lands on a
+     repeat. Used by the announcement bar, whose copies are long enough to
+     outrun any window on their own. */
+  @keyframes marquee {
+    from { transform: translate3d(0, 0, 0); }
+    to   { transform: translate3d(-50%, 0, 0); }
+  }
+  /* Four-copy marquee, same trick, quarter of the distance. The sparkle
+     ribbon's list is short — two copies of it do not span a desktop window,
+     so it needs four and a shorter throw. See .sparkle__group. */
+  @keyframes marquee-quarter {
+    from { transform: translate3d(0, 0, 0); }
+    to   { transform: translate3d(-25%, 0, 0); }
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  @keyframes pulse {
+    0%   { transform: scale(1);   opacity: 0.9; }
+    70%  { transform: scale(1.45); opacity: 0; }
+    100% { transform: scale(1.45); opacity: 0; }
+  }
+
+  @keyframes floaty {
+    0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+    50%      { transform: translate3d(0, -18px, 0) rotate(4deg); }
+  }
+
+  @keyframes floaty-slow {
+    0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+    50%      { transform: translate3d(10px, -12px, 0) rotate(-5deg); }
+  }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.25; transform: scale(0.85) rotate(0deg); }
+    50%      { opacity: 1;    transform: scale(1.1) rotate(20deg); }
+  }
+
+  /* A lit window in the footer's horizon. Opacity only — `twinkle` would
+     spin the pane, and a rotating window reads as a mistake rather than as
+     a light being on. */
+  @keyframes lamp {
+    0%, 100% { opacity: 0.55; }
+    50%      { opacity: 1; }
+  }
+
+  @keyframes drift {
+    0%   { transform: translate3d(-12px, 0, 0); }
+    100% { transform: translate3d(12px, 0, 0); }
+  }
+
+  /* Balloons and kites: a long lazy rise with a little sway. */
+  @keyframes bob {
+    0%, 100% { transform: translate3d(0, 0, 0) rotate(-3deg); }
+    50%      { transform: translate3d(-8px, -26px, 0) rotate(3deg); }
+  }
+
+  /* Pencils, crayons and paper planes: a pivot around one end. */
+  @keyframes swing {
+    0%, 100% { transform: rotate(-8deg); }
+    50%      { transform: rotate(8deg); }
+  }
+
+  /* Clouds crossing the section, slowly, forever. */
+  @keyframes sail {
+    0%   { transform: translate3d(-4vw, 0, 0); }
+    100% { transform: translate3d(4vw, 0, 0); }
+  }
+
+  /* Train wheels and funnel smoke. */
+  @keyframes roll { to { transform: rotate(360deg); } }
+
+  @keyframes puff {
+    0%   { opacity: 0;   transform: translate(0, 0) scale(0.5); }
+    18%  { opacity: 0.95; }
+    100% { opacity: 0;   transform: translate(-46px, -74px) scale(1.7); }
+  }
+
+  @keyframes pop-in {
+    from { opacity: 0; transform: scale(0.94) translateY(12px); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  @keyframes wiggle {
+    0%, 100% { transform: rotate(0deg) scale(1); }
+    25%      { transform: rotate(5deg) scale(1.05); }
+    75%      { transform: rotate(-5deg) scale(1.05); }
+  }
+
+  /* ---------- decorative motion ----------
+     These run on the inner <svg>, never on the .deco wrapper. GSAP scrubs
+     the wrapper's transform for scroll parallax, and a running CSS
+     animation outranks an inline style — so if both targeted the same
+     node the idle float would silently win and the parallax would appear
+     to do nothing. One node each keeps them composable. */
+  .deco--float  > svg { animation: floaty 7s var(--ease-in-out) infinite; }
+  .deco--float2 > svg { animation: floaty-slow 9s var(--ease-in-out) infinite; }
+  .deco--star   > svg { animation: twinkle 4.5s var(--ease-in-out) infinite; }
+  .deco--drift  > svg { animation: drift 11s var(--ease-in-out) infinite alternate; }
+  .deco--bob    > svg { animation: bob 8s var(--ease-in-out) infinite; }
+  .deco--swing  > svg { animation: swing 5.5s var(--ease-in-out) infinite; transform-origin: 50% 90%; }
+  .deco--sail   > svg { animation: sail 18s var(--ease-in-out) infinite alternate; }
+  .deco--wiggle > svg { animation: wiggle 6s var(--ease-in-out) infinite; }
+  .deco--turn   > svg { animation: spin 34s linear infinite; }
+
+  .deco--d1 > svg { animation-delay: -1.2s; }
+  .deco--d2 > svg { animation-delay: -2.6s; }
+  .deco--d3 > svg { animation-delay: -4.1s; }
+  .deco--d4 > svg { animation-delay: -5.5s; }
+  .deco--d5 > svg { animation-delay: -7.3s; }
+
+  /* ---------- scroll reveal ----------
+     JS adds .js-motion to <html> only when the user has not asked
+     for reduced motion. Without that class nothing is ever hidden,
+     so content can never be trapped invisible. */
+
+  .js-motion [data-reveal] {
+    opacity: 0;
+    transform: translate3d(0, 26px, 0);
+    will-change: opacity, transform;
+  }
+  .js-motion [data-reveal].is-in {
+    opacity: 1;
+    transform: none;
+    transition: opacity 0.75s var(--ease-out), transform 0.75s var(--ease-out);
+    transition-delay: var(--d, 0ms);
+  }
+
+  /* ---- a reveal target that is also a button ----
+     The settled state above parks `transform: none` on the element and
+     swaps in its own 0.75s transition. This file is in the `utilities`
+     layer and `.btn` is in `components`, and a later layer wins over an
+     earlier one however specific the earlier rule is — so for the two
+     CTAs that carry [data-reveal] (the story board's "Read our approach"
+     and safety's "Schedule a visit") the reveal was quietly holding the
+     button's transform at none for the rest of the page's life. Those two
+     arrived correctly and then never moved on hover, with none of the
+     button's timing left either.
+
+     So the reveal gets the entrance and hands the element back. The lift
+     and the press are restated here, in this layer, where they can win;
+     the shadow steps need no restating because the reveal never touches
+     box-shadow. */
+  .js-motion .btn[data-reveal].is-in {
+    transition: opacity 0.75s var(--ease-out),
+                transform var(--dur) var(--ease-back),
+                box-shadow var(--dur) var(--ease-back),
+                background-color var(--dur), color var(--dur),
+                border-color var(--dur);
+    /* The stagger delay belongs to the entrance. Left in place it would
+       also postpone the hover by the same amount. */
+    transition-delay: 0s;
+  }
+  .js-motion .btn[data-reveal].is-in:hover  { transform: translate(-3px, -3px); }
+  .js-motion .btn[data-reveal].is-in:active { transform: translate(2px, 2px); }
+
+  /* ---- every card that moves under the pointer ----
+     Same defect, six more instances. Each of these components both
+     carries [data-reveal] and defines a hover, and the rule above was
+     taking that hover away from all of them: `transition` is a shorthand
+     and replaces what it does not mention, so their lifts landed in a
+     single frame — and the five that wrote the lift as `transform` did
+     not land at all, because the settled state above holds `transform`
+     at none for as long as the element exists.
+
+     So the lifts are written in `rotate` and `translate` now (see the
+     components in style.css) and the reveal keeps `transform` for the
+     entrance — neither has to give anything up. The list is explicit
+     rather than loose because the list IS the audit: these are all the
+     reveal targets on the page with a hover. `--dur-hover` and
+     `--ease-hover` let a component set its own beat, which the educator
+     cards do; everything else inherits the page's 0.4s spring. */
+  .js-motion :is(.member, .program, .centre, .step, .voice, .idx, .snap)[data-reveal].is-in {
+    transition:
+      opacity 0.75s var(--ease-out),
+      transform 0.75s var(--ease-out),
+      rotate var(--dur-hover, var(--dur)) var(--ease-hover, var(--ease-back)),
+      translate var(--dur-hover, var(--dur)) var(--ease-hover, var(--ease-back)),
+      box-shadow var(--dur-hover, var(--dur)) var(--ease-hover, var(--ease-back));
+  }
+
+  /* word-split headline reveal */
+  .js-motion [data-split] .word {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: top;
+    padding-bottom: 0.12em;
+  }
+  .js-motion [data-split] .word > span {
+    display: inline-block;
+    transform: translate3d(0, 105%, 0);
+  }
+  .js-motion [data-split].is-in .word > span {
+    transform: none;
+    transition: transform 0.85s var(--ease-out);
+    transition-delay: calc(var(--i, 0) * 70ms);
+  }
+
+  /* ---------- reduced motion / no-JS safety net ---------- */
+  @media (prefers-reduced-motion: reduce) {
+    .announce__track,
+    .sparkle__track { animation: none; transform: none; }
+    .hero__badge svg { animation: none; }
+    .hero__ring { animation: none; }
+    .hero__scroll svg { animation: none; }
+    .wa-float::after { animation: none; }
+    .loco__wheel, .loco__smoke i { animation: none !important; }
+    .deco, .deco > svg { animation: none !important; }
+    /* The banner's own additions: the crayon marks stop drifting and idling,
+       and the caption stops flipping as it is rewritten. The photograph
+       still cross-fades and the copy still changes — those are the content,
+       not decoration.
+
+       Nothing here needs to touch .sw-scene__still: its overscan is a static
+       `scale`, not an animation, so switching animations off cannot strip it
+       and open a bare edge in the cloud. */
+    .hero-doodle > svg { animation: none !important; }
+    .hero-doodle { translate: none !important; }
+    .hero-caption.is-swap > * { animation: none !important; }
+    .js-motion [data-reveal],
+    .js-motion [data-split] .word > span {
+      opacity: 1 !important;
+      transform: none !important;
+      animation: none !important;
+    }
+  }
+}
