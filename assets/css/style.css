@@ -295,7 +295,24 @@
     margin-inline: auto; min-height: var(--bar-h);
     display: flex; align-items: center; justify-content: space-between;
     gap: var(--sp-4);
-    padding: 7px 7px 7px clamp(0.9rem, 1.6vw, 1.4rem);
+    /* Even padding is not even to the eye in here. Every widget on this bar
+       casts the house's hard offset shadow down and to the right — the
+       badge and the burger 3px, the CTA 5px (8px on hover, but it travels
+       -3px with it, so its reach is 5px in both states). At a flat 7px the
+       CTA's shadow was sitting 2px off the pill's own outline, i.e. on top
+       of it at the rounded end, while the brand had ~21px of air on the
+       left. So the bottom and the right carry the shadow allowance on top
+       of the gap, and the gap the eye actually reads is --bar-inset-x on
+       both sides and --bar-inset-y above and below. */
+    --bar-inset-x: clamp(0.55rem, 1.6vw, 1.4rem);
+    --bar-inset-y: 8px;
+    --bar-pop: 5px;    /* the CTA's reach — it is the tallest thing here, so
+                          it is what the bottom edge has to clear */
+    --bar-pop-x: 5px;  /* the reach of whatever is last in the row */
+    padding: var(--bar-inset-y)
+             calc(var(--bar-inset-x) + var(--bar-pop-x))
+             calc(var(--bar-inset-y) + var(--bar-pop))
+             var(--bar-inset-x);
     border: var(--outline) solid var(--ink);
     border-radius: var(--r-pill);
     /* The house grammar: ink outline, hard offset, no blur. A soft drop
@@ -507,6 +524,12 @@
      CTA need ~1100px inside the pill's own gutters before anything has to
      give. Below it the links go to the drawer and the burger appears. */
   @media (max-width: 1139px) {
+    /* The burger takes over the end of the row from the CTA down here, and
+       it is drawn on a 3px offset rather than the button's 5px — so the
+       right-hand allowance shrinks with it and the gap stays the one the
+       brand has on the left. */
+    .header__inner { --bar-pop-x: 3px; }
+
     /* Off-canvas drawer.
        The <nav> itself is a full-viewport overlay and .nav__panel is the
        panel that slides. Nothing is ever parked outside the viewport,
@@ -519,8 +542,17 @@
       z-index: 120;
       pointer-events: none;
       overflow: hidden;          /* clips the off-canvas panel — see note above */
+      /* Closed, this is a full-viewport layer carrying a live
+         `backdrop-filter` (see .nav::before) that the compositor has to keep
+         honouring behind every scroll of the page, and a panel full of links
+         that Tab still walks into. `visibility` takes both out: hidden costs
+         nothing to composite and is skipped by sequential focus. It has to
+         wait for the slide to finish on the way out, hence the delay — and
+         `.is-open` sets it back with no delay so the way in is immediate. */
+      visibility: hidden;
+      transition: visibility 0s linear 0.45s;
     }
-    .nav.is-open { pointer-events: auto; }
+    .nav.is-open { pointer-events: auto; visibility: visible; transition-delay: 0s; }
 
     /* The scrim is a pseudo-element that fades, rather than a
        `backdrop-filter` that animates from 0px to 4px. Interpolating a blur
@@ -532,7 +564,7 @@
       background: rgb(31 20 64 / 0.55);
       backdrop-filter: blur(4px);
       opacity: 0;
-      transition: opacity 0.45s var(--ease-out);
+      transition: opacity 0.45s var(--ease-in-out);
     }
     .nav.is-open::before { opacity: 1; }
     .nav__spot { display: none; }
@@ -553,7 +585,10 @@
       border-left: 3px solid var(--brand-500);
       padding: calc(var(--bar-h, 66px) + var(--sp-8)) var(--sp-6) var(--sp-7);
       transform: translateX(100%);
-      transition: transform 0.45s var(--ease-out);
+      /* Eased at both ends, so the panel takes up and sets down rather than
+         leaving at full speed — it moves with the scrim, which is on the same
+         curve and the same 0.45s. */
+      transition: transform 0.45s var(--ease-in-out);
       /* Declared up front, not on .is-open — a will-change that arrives on
          the same frame as the transition is too late to promote the layer. */
       will-change: transform;
@@ -625,7 +660,10 @@
      the padding says. */
   .nav { min-width: 0; }
   @media (min-width: 1140px) and (max-width: 1339px) {
-    .header__inner { gap: var(--sp-3); }
+    /* The side gap gives up ~20px across the row along with the links —
+       still equal left and right, just tighter, because this band is the
+       one where the pill fits on measurement rather than on slack. */
+    .header__inner { gap: var(--sp-3); --bar-inset-x: 10px; }
     .nav ul a { padding-inline: 0.6em; font-size: var(--fs-xs); }
   }
 

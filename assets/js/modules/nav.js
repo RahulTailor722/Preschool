@@ -126,8 +126,18 @@ export function initNav() {
     if (open) {
       header.classList.remove('is-hidden');
       /* Land the caret inside the panel, so the next Tab walks the menu
-         rather than the page behind it. */
-      if (closeBtn) closeBtn.focus();
+         rather than the page behind it.
+
+         `preventScroll` is what makes the drawer slide at all. At the moment
+         this runs the panel is still parked at translateX(100%), and .nav —
+         `overflow: hidden` — is a scroll container all the same. A plain
+         focus() therefore asks the browser to bring the button into view, and
+         it obliges by scrolling .nav a full panel-width sideways: the drawer
+         snaps open on the first frame, then the scroll offset eases back to 0
+         against the transform easing in. The two cancel, the panel appears
+         nailed in place while everything around it lurches, and the 0.45s
+         slide is never seen. */
+      if (closeBtn) closeBtn.focus({ preventScroll: true });
     } else if (restoreFocus) {
       burger.focus();
     }
