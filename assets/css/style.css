@@ -608,7 +608,10 @@
     .nav__close:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ink); }
     .nav__close svg { width: 20px; height: 20px; }
 
-    .nav ul { flex-direction: column; align-items: stretch; gap: 0; }
+    /* Full width of the panel: as a column of stretched items the list still
+       shrink-wrapped its widest link, so the dashed rules between the rows
+       and the rows' own tap targets stopped short of the drawer's edge. */
+    .nav ul { flex-direction: column; align-items: stretch; gap: 0; width: 100%; }
     .nav li + li { border-top: 2px dashed var(--deep-700); }
     /* Scoped to the link list — .nav also contains the drawer's CTA button
        and phone link, which carry their own component styling. */
@@ -723,10 +726,27 @@
 
      The unstuck values are the right ones to use here — the header is only
      condensed once you have scrolled, by which point the top of the banner
-     is off screen and the size it left behind no longer matters. */
+     is off screen and the size it left behind no longer matters.
+
+     `--bar-cover` is that strip, and every measurement in this section takes
+     it from here rather than adding `--bar-h` up again for itself.
+
+     The slack on the end is the fix for a cream line that showed between the
+     announcement bar and the photograph at every width. `--bar-h` is a
+     *minimum* on the pill (`.header__inner` has `min-height: var(--bar-h)`),
+     not its height: the badge, the CTA and the burger between them need more
+     than 66px, so the bar measured 96px at 320 and 112px at 1440 while this
+     calculation was pulling the banner up by 86 and 98. The difference was
+     page background showing through as a hairline under the marquee.
+
+     Slack rather than a truer number for `--bar-h`, because the pill is
+     content-height and always will be: overshooting hides a few more pixels
+     of photograph behind a bar that was covering it anyway, and undershooting
+     by one pixel is a visible line across the top of the page. */
   .hero {
+    --bar-cover: calc(var(--bar-h) + var(--bar-pad) * 2 + 18px);
     position: relative;
-    margin-top: calc(-1 * (var(--bar-h) + var(--bar-pad) * 2));
+    margin-top: calc(-1 * var(--bar-cover));
   }
 
   /* Full-bleed. The banner is the one element on the page allowed to touch
@@ -750,11 +770,11 @@
     position: relative;
     display: grid;
     align-content: center;
-    /* The bar's height is added back on, because the top of that much of
+    /* The bar's strip is added back on, because the top of that much of
        the frame is behind the header and not part of the picture anyone
        sees. Without it, overlaying the bar would simply have cropped the
        banner by a bar's worth. */
-    min-height: calc(clamp(500px, 78vh, 720px) + var(--bar-h) + var(--bar-pad) * 2);
+    min-height: calc(clamp(500px, 78vh, 720px) + var(--bar-cover));
     overflow: hidden;
     isolation: isolate;
     background: var(--deep-900);
@@ -887,7 +907,7 @@
        on its whole height, but the card has to look centred in the part of
        it you can actually see, which starts under the header. */
     padding-block:
-      calc(clamp(20px, 4vw, 48px) + var(--bar-h) + var(--bar-pad) * 2)
+      calc(clamp(20px, 4vw, 48px) + var(--bar-cover))
       clamp(56px, 8vw, 92px);
     pointer-events: none;
   }
@@ -1054,28 +1074,45 @@
   }
 
   /* ---- the chevrons ----
-     Thin and at the very edges, where they are reachable but not part of
-     the composition. Cream on a soft ink disc so they hold up over a pale
-     photograph as well as a dark one, without becoming a third button
-     competing with the plaque's own. */
+     What was here was a translucent dark disc with a blur behind it: the
+     default slider control that ships with every carousel, on a page where
+     every other control is a cut-out with an ink outline and a hard offset
+     shadow. It also had to be half-transparent to survive over a photograph,
+     which left it faint over a dark frame and invisible over a bright one.
+
+     So they are stickers now, like the lightbox's own nav discs and the
+     buttons: cream, outlined, with the shadow the whole page shares. Opaque
+     cream reads over any photograph without needing a scrim under it, and
+     the ink outline is what holds the edge against a pale one.
+
+     The lift and the press are `.btn`'s, to the pixel, deliberately — a
+     control that moves differently reads as a different component even when
+     it looks the same at rest. */
   .hero__arrow {
     position: absolute; z-index: 5; top: 50%;
     translate: 0 -50%;
     display: grid; place-items: center;
-    width: 52px; height: 52px; border-radius: 50%;
-    color: var(--on-dark);
-    background: color-mix(in srgb, var(--deep-900) 40%, transparent);
-    backdrop-filter: blur(4px);
-    opacity: 0.75;
-    transition: opacity var(--dur), background var(--dur), scale var(--dur) var(--ease-back);
+    width: 50px; height: 50px; border-radius: 50%;
+    color: var(--deep-900);
+    background: var(--base);
+    border: var(--outline) solid var(--ink);
+    box-shadow: 4px 4px 0 var(--ink);
+    transition: transform var(--dur) var(--ease-back),
+                box-shadow var(--dur), background-color var(--dur);
   }
-  .hero__arrow svg { width: 26px; height: 26px; }
+  .hero__arrow svg { width: 24px; height: 24px; }
+  /* Sunshine on hover, the same warm-up the primary button makes. */
   .hero__arrow:hover {
-    opacity: 1; scale: 1.08;
-    background: color-mix(in srgb, var(--deep-900) 62%, transparent);
+    background: var(--brand-500);
+    transform: translate(-3px, -3px);
+    box-shadow: 7px 7px 0 var(--ink);
   }
-  .hero__arrow--prev { left: clamp(6px, 1.6vw, 26px); }
-  .hero__arrow--next { right: clamp(6px, 1.6vw, 26px); }
+  .hero__arrow:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0 var(--ink);
+  }
+  .hero__arrow--prev { left: clamp(10px, 1.6vw, 26px); }
+  .hero__arrow--next { right: clamp(10px, 1.6vw, 26px); }
 
   /* ---- the hem ----
      Cream domes along the bottom edge, so the banner ends in the page's own
@@ -1093,46 +1130,152 @@
      between them. */
   .hero__scallop {
     --sc: clamp(14px, 1.9vw, 26px);
+    /* The colour the domes are cut out of. It is the page's cream here,
+       which is what the banner opens onto on a desktop window; on a phone
+       the hem moves up to the foot of the photograph and lands on the trust
+       band's warmer cream instead, so it is a variable. */
+    --hem: var(--base);
     position: absolute; z-index: 5;
     left: 0; right: 0; bottom: -1px;
     height: calc(var(--sc) * 2);
     pointer-events: none;
     background:
       radial-gradient(circle var(--sc) at var(--sc) var(--sc),
-        var(--base) 98%, transparent 100%)
+        var(--hem) 98%, transparent 100%)
         0 0 / calc(var(--sc) * 2) var(--sc) repeat-x,
-      linear-gradient(var(--base), var(--base))
+      linear-gradient(var(--hem), var(--hem))
         0 100% / 100% calc(var(--sc) + 1px) no-repeat;
   }
 
-  /* ---- phones ----
-     The frame gets shallower, the plaque takes the width it is given, and
-     the chevrons go: a thumb swipes, and two 52px discs on the edges of a
-     small picture sit exactly where the plaque needs the room. */
+  /* ---- phones: the banner stops being an overlay ----
+     On a desktop window the plaque sits on the left third of a wide
+     photograph and there is picture either side of it. Narrow the window to
+     a phone and that composition has nowhere to go: the card is as wide as
+     the frame, the frame is barely taller than the card, and the result was
+     a dark plaque over a strip of shoes and pavement — five photographs of
+     children, none of whose faces were ever on screen.
+
+     So on phones the two things stop sharing the same space. The picture
+     takes the top of the frame with the header pill floating on it — which
+     is what keeps the banner reading as the top of the page rather than as
+     a picture on it — and it ends in the page's own scalloped hem instead of
+     a straight cut. Below that the ground is cream, the page's colour, and
+     the plaque is a dark sticker pinned across the domes.
+
+     That last part is the whole idea: the hem was already at the foot of the
+     banner, separating it from the page. Moved up to the foot of the
+     photograph it does the same job one row earlier, the card lands on cream
+     with room for its own shadow, and the banner runs into the section below
+     it without a second horizontal seam.
+
+     `--shot-h` is the visible picture: how much of it clears the header.
+     The bar's height is added wherever the window is measured, because that
+     much of the frame is behind the pill and is not picture anyone sees. */
   @media (max-width: 720px) {
-    /* Same addition as on desktop: the bar's height is behind the header
-       and is not picture anybody sees, so it has to come back on top or
-       the card ends up filling the whole visible frame. */
     .hero__frame {
-      min-height: calc(clamp(420px, 64vh, 520px) + var(--bar-h) + var(--bar-pad) * 2);
+      --shot-h: clamp(240px, 42vh, 380px);
+      --shot-box: calc(var(--shot-h) + var(--bar-cover));
+      /* Rows now, not layers: the picture is row one and the copy is row
+         two, so the frame is as tall as the two of them and no taller. The
+         desktop `min-height` would only add empty ground under the card. */
+      align-content: start;
+      min-height: 0;
+      /* Indigo was the ground when the photograph covered the whole frame.
+         Here only the top is photograph and the rest is page — and it is the
+         trust band's cream, not the page's, so the banner's foot and the
+         section under it are one surface with no tonal step between them. */
+      background: var(--base-2);
     }
+
+    /* The photographs come back into the flow to become that first row.
+       They stay a stack internally — each `.hero__slide` is still absolute
+       against this box — so the crossfade, the push-in and the per-slide
+       crop are all untouched.
+
+       `overflow: hidden` is not tidiness: `.hero__slide img` is scaled to
+       1.13 by the pan, and with the box no longer stretched to the frame
+       there is nothing else to clip it — the picture bled a bright strip of
+       itself out past its own bottom edge and under the card. */
+    .hero__slides {
+      position: relative; inset: auto;
+      height: var(--shot-box);
+      overflow: hidden;
+    }
+
+    /* Both overlays stop at the foot of the picture. Left covering the whole
+       frame they would lie over the card as well — the scrim greying out a
+       plaque that is already dark, and the confetti bobbing across the
+       headline. */
+    .hero__scrim, .hero__confetti { bottom: auto; height: var(--shot-box); }
+
+    /* Only the header's shade is left. The desktop scrim's left-hand ramp
+       existed to hold up type laid over the picture and there is none now,
+       and its bottom lift was for a hem sitting on the photograph in cream —
+       the hem is that cream, so darkening the picture underneath it only
+       made a grey band behind the domes. */
+    .hero__scrim {
+      background: linear-gradient(180deg,
+        color-mix(in srgb, var(--deep-900) 78%, transparent) 0%,
+        color-mix(in srgb, var(--deep-900) 30%, transparent) 12%,
+        transparent 34%);
+    }
+
+    /* The hem, moved from the foot of the banner to the foot of the picture.
+       It keeps its own `--sc`, so the domes are the same domes at the same
+       size as everywhere else on the page. */
+    .hero__scallop {
+      --hem: var(--base-2);
+      top: calc(var(--shot-box) - var(--sc) * 2);
+      bottom: auto;
+    }
+
+    /* Pinned across the domes rather than sitting under them. The overlap is
+       small on purpose — enough that the card is holding the edge down, not
+       so much that it eats the scallop it is pinned to. */
     .hero__copies {
       justify-items: stretch;
-      padding-block: clamp(16px, 4vw, 24px) clamp(44px, 11vw, 64px);
+      /* Over the hem, not under it: the scallop outranks the copy layer on
+         desktop, where the card never reaches it. */
+      z-index: 6;
+      margin-top: clamp(-26px, -4vw, -14px);
+      padding-block: 0 clamp(28px, 7vw, 44px);
     }
-    .hero__copy { width: auto; padding: 22px 20px 24px; border-radius: 26px; }
+    /* Takes the width it is given — but only up to a measure. A phone held
+       sideways is still inside this breakpoint, and stretched across 700px
+       the plaque became a banner strip with one line of type in it. */
+    .hero__copy {
+      width: auto; max-width: 540px;
+      padding: 22px 20px 24px; border-radius: 26px;
+    }
     .hero__title { font-size: clamp(1.55rem, 6.2vw, 2rem); }
     .hero__body { margin-top: 12px; font-size: 0.95rem; }
     .hero__btn { margin-top: 16px; }
-    .hero__arrow { display: none; }
+
+    /* The chevrons come back. They were dropped on phones because two 52px
+       discs sat exactly where the plaque needed the room — with the plaque
+       out of the picture there is room, and a photograph that visibly turns
+       over is worth a control that says so. Smaller, and centred in the
+       picture window rather than in the frame. Swipe still works. */
+    .hero__arrow {
+      display: grid;
+      top: calc(var(--bar-cover) + var(--shot-h) / 2);
+      width: 42px; height: 42px;
+      box-shadow: 3px 3px 0 var(--ink);
+    }
+    .hero__arrow svg { width: 20px; height: 20px; }
+
     /* Half the confetti on a small frame — seven discs over a portrait
        crop is weather, not decoration. */
     .hero__confetti span:nth-child(even) { display: none; }
   }
 
-  /* Short phones cannot carry the supporting line as well as the headline
-     and the button. */
+  /* Short phones — and any phone held sideways — cannot carry the supporting
+     line as well as the headline and the button. The picture's window comes
+     down with it: 42vh of a 400px-tall landscape window is below the floor
+     the clamp holds, so without this the photograph would take the whole
+     screen and the card would start below the fold. */
   @media (max-width: 720px) and (max-height: 680px) {
+    .hero__frame { --shot-h: clamp(170px, 32vh, 250px); }
     .hero__body { display: none; }
   }
 
@@ -1879,16 +2022,16 @@
   .rail {
     position: relative;
     margin-top: var(--sp-5);
-    /* Floored at 400px, which is what the scene actually needs — the
-       locomotive is 262px tall, the taller hill reaches ~262px, and the
-       stage's own padding accounts for the rest. Below that the train
-       starts getting cropped rather than centred. */
-    --stage-h: clamp(400px, 54vh, 580px);
+    /* Floored at 440px, which is what the scene actually needs — the tallest
+       carriage is ~332px including its wheels, the rails add 18px, and the
+       stage's padding plus the hint row underneath account for the rest.
+       Below that the train starts getting cropped rather than centred. */
+    --stage-h: clamp(440px, 56vh, 600px);
   }
 
   .rail__stage {
     position: relative;
-    display: grid; align-content: center; gap: var(--sp-5);
+    display: grid; align-content: center; gap: var(--sp-4);
     /* Explicit column. An implicit `auto` column is max-content sized, and
        .rail__train is width:max-content — so the column would inflate to the
        full length of the train, the viewport would stretch with it, and the
@@ -1969,8 +2112,16 @@
     will-change: transform;
   }
 
+  /* A row of the stage grid, not an absolutely-positioned overlay. Pinned to
+     the stage's bottom edge it sat wherever the stage ended, and the scene is
+     centred independently of it — so at a short stage the rails came down on
+     top of the words. In flow it owns its own strip under the track and the
+     two can never meet, at any width or viewport height. It only ever fades,
+     never leaves, so the space it holds is stable and nothing reflows. */
   .rail__hint {
-    position: absolute; z-index: 2; left: 50%; translate: -50% 0; bottom: var(--sp-4);
+    position: relative; z-index: 2;
+    justify-self: center; max-width: 100%; text-align: center;
+    padding-inline: var(--gutter);
     font-size: var(--fs-xs); font-weight: 800;
     letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted);
     /* fades out once the journey is under way */
@@ -2145,6 +2296,13 @@
   .car.is-hidden { display: none; }
 
   @media (max-width: 700px) {
+    /* Carriages are ~240px tall here rather than ~332px, so the scene needs
+       far less room; the floor comes down with it and the hint keeps its
+       own line under the track. Two lines are allowed for the wording at
+       this width, hence the leading. */
+    .rail { --stage-h: clamp(360px, 62vh, 480px); }
+    .rail__hint { letter-spacing: 0.12em; line-height: 1.45; }
+
     .loco { width: 140px; height: 156px; }
     .loco__boiler { width: 108px; height: 56px; bottom: 28px; }
     .loco__cab { width: 58px; height: 86px; bottom: 28px; }
