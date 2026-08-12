@@ -26,13 +26,55 @@ export function initTrain({ reduced = false } = {}) {
   const viewport = rail.querySelector('.rail__viewport');
   if (!stage || !viewport) return;
 
-  /* Coarse pointers get the native swipe strip: it is the better interaction
-     on a phone, and pinning a tall section on a touch device fights the
-     browser's own scroll handling. */
-  const coarse = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
-  if (reduced || coarse) return;
+  /* Wake the carriage photographs up as the section comes into range.
+
+     They ship as `loading="lazy"`, which is right for eight photographs a
+     long way down the page — but a lazily-loaded image is only fetched when
+     the browser's own intersection pass decides it is near the viewport, and
+     these ones live inside a clipped strip whose contents are moved by a
+     transform rather than by scrolling. Carriages therefore arrive on screen
+     without ever having been *scrolled* into it, and the strip opened on a
+     row of empty coloured shells. Switching the attribute to `eager` starts
+     the fetch there and then, so by the time a carriage rides in it is
+     carrying its photograph. The observer runs before the reduced-motion
+     bail-out below, because the un-driven swipe strip wants this too. */
+  const wake = new IntersectionObserver((entries, self) => {
+    if (!entries.some((e) => e.isIntersecting)) return;
+    train.querySelectorAll('img[loading="lazy"]').forEach((img) => {
+      img.loading = 'eager';
+    });
+    self.disconnect();
+  }, { rootMargin: '400px 0px' });
+  wake.observe(rail);
+
+  /* Phones used to be sent back to the native swipe strip here, on the
+     reasoning that swiping is the better gesture on a touch screen. In
+     practice it meant the section did nothing: the strip opens on the
+     locomotive and about one carriage, a phone gives no hint that the thing
+     scrolls sideways, and the line under it says "keep scrolling" while
+     scrolling moves the page past it. The journey is the section.
+
+     So the journey runs everywhere now. Nothing here blocks or hijacks
+     scrolling — the listener is passive and never calls preventDefault, the
+     stage is held with `position: sticky`, and all this code does is read
+     `scrollY` and set a transform. The page scrolls at exactly its own
+     speed; the train is what moves.
+
+     Reduced motion still opts out, and so does anything that stops the
+     module running at all: without `.is-driven` the stylesheet leaves the
+     strip as an ordinary horizontal scroller and every carriage is still
+     reachable by swiping. */
+  if (reduced) return;
 
   rail.classList.add('is-driven');
+
+  /* Only a width change is a real layout change on a phone. Mobile browsers
+     fire `resize` every time the address bar slides away, and re-measuring
+     mid-scroll re-writes the rail's height under the reader — the section
+     jumps. Desktop needs height changes, because the journey's length is
+     measured against the window. */
+  const coarse = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+  let lastW = window.innerWidth;
 
   let distance = 0;   // how far the train must travel, in px
   let railTop = 0;    // the rail's top in DOCUMENT coordinates
@@ -79,7 +121,13 @@ export function initTrain({ reduced = false } = {}) {
   const onScroll = () => { if (!raf) raf = requestAnimationFrame(apply); };
 
   window.addEventListener('scroll', onScroll, { passive: true });
-  window.addEventListener('resize', measure);
+  window.addEventListener('resize', () => {
+    if (coarse && window.innerWidth === lastW) return;
+    lastW = window.innerWidth;
+    measure();
+  });
+  /* The one height change on a phone that is a layout change. */
+  window.addEventListener('orientationchange', measure);
   /* Filtering adds or removes carriages, so the journey length changes. */
   window.addEventListener('train:relayout', measure);
   /* Late-loading carriage images change scrollWidth after first measure. */

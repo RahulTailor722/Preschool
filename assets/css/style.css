@@ -2005,10 +2005,10 @@
      A toy train carries the photographs. The stage pins to the viewport and
      train.js turns vertical scroll into the train's horizontal travel.
 
-     Without JS (or with reduced motion, or on a touch device) `.rail` never
-     gets `.is-driven`: the stage is a normal block and `.rail__viewport` is
-     an ordinary horizontal scroller, so every carriage is still reachable by
-     swiping. Nothing here is load-bearing on JS. */
+     Without JS (or with reduced motion) `.rail` never gets `.is-driven`: the
+     stage is a normal block and `.rail__viewport` is an ordinary horizontal
+     scroller, so every carriage is still reachable by swiping. Nothing here
+     is load-bearing on JS. */
   /* `--stage-h` is the pinned stage's height, and it is what sets the gap
      between the filter chips and the train.
 
@@ -2048,6 +2048,12 @@
   .is-driven .rail__stage {
     position: sticky;
     top: calc((100vh - var(--stage-h)) / 2);
+    /* `svh` is the small viewport — the window with the mobile browser's bars
+       showing, which is the one measurement that does not change while you
+       scroll. In `vh` the pinned stage drifts by half the address bar's
+       height every time it slides away. Declared second so desktop browsers
+       that predate the unit keep the line above. */
+    top: calc((100svh - var(--stage-h)) / 2);
     height: var(--stage-h);
   }
 
@@ -2296,12 +2302,31 @@
   .car.is-hidden { display: none; }
 
   @media (max-width: 700px) {
-    /* Carriages are ~240px tall here rather than ~332px, so the scene needs
+    /* Carriages are shorter here than on a desktop window, so the scene needs
        far less room; the floor comes down with it and the hint keeps its
        own line under the track. Two lines are allowed for the wording at
        this width, hence the leading. */
-    .rail { --stage-h: clamp(360px, 62vh, 480px); }
+    .rail { --stage-h: clamp(310px, 44vh, 400px); }
     .rail__hint { letter-spacing: 0.12em; line-height: 1.45; }
+
+    /* Half the screen, not a third. On a phone the journey is the section's
+       whole point, and starting the locomotive a third of the way across put
+       it more or less where it would end up — there was no arrival. From the
+       middle of the screen it has track ahead of it and track behind it. */
+    .is-driven .rail__viewport { padding-inline: 50vw var(--gutter); }
+
+    /* Narrower carriages. At 26vw-of-a-desktop-window sizing, one carriage
+       plus the locomotive filled a 390px screen edge to edge: the strip
+       opened on a single tile with no sign that anything followed it. At
+       ~56vw the next carriage is always part-way into frame, which is what
+       tells you the train is a train. */
+    .car { width: clamp(180px, 56vw, 260px); }
+    .car__body { padding: 10px 10px 24px; border-radius: 16px 16px 8px 8px; }
+    .car__body img { border-radius: 10px; }
+    .car figcaption { padding: 0.42em 0.9em; bottom: 10px; }
+    .car__wheels i { width: 46px; height: 46px; }
+    .car { padding-bottom: 24px; }
+    .car::before { bottom: 42px; left: -28px; width: 30px; }
 
     .loco { width: 140px; height: 156px; }
     .loco__boiler { width: 108px; height: 56px; bottom: 28px; }

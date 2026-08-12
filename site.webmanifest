@@ -1,0 +1,15 @@
+{
+  "name": "Gulmohar Early Years",
+  "short_name": "Gulmohar",
+  "description": "Montessori-inspired preschool and daycare in Bopal, Ahmedabad.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "browser",
+  "background_color": "#FFFCF5",
+  "theme_color": "#FFC62E",
+  "icons": [
+    { "src": "assets/icons/favicon.svg", "type": "image/svg+xml", "sizes": "any" },
+    { "src": "assets/icons/icon-192.png", "type": "image/png", "sizes": "192x192" },
+    { "src": "assets/icons/icon-512.png", "type": "image/png", "sizes": "512x512" }
+  ]
+}

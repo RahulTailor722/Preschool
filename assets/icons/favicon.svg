@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Gulmohar Early Years">
+  <!-- The header badge's mark, redrawn for 16px.
+
+       The brand SVG in the page has three hairline rays and a 2.5px outline
+       on a 48px grid; at favicon size those rays close up into a smudge and
+       the outline disappears. This is the same child-and-sun figure with the
+       rays dropped, the strokes taken to 3 on a 64 grid, and the head sat
+       lower so the whole figure keeps its own margin inside the tile. -->
+  <rect width="64" height="64" rx="18" fill="#1F1440"/>
+  <circle cx="32" cy="25" r="11" fill="#FFC62E" stroke="#1F1440" stroke-width="3"/>
+  <path d="M32 38c10 0 17 8.5 17 18H15c0-9.5 7-18 17-18z" fill="#FF5C8A" stroke="#1F1440" stroke-width="3" stroke-linejoin="round"/>
+</svg>
